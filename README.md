@@ -8,7 +8,7 @@
 
 ![Скриншот-1 к Заданию 1:](https://github.com/presdes/monitoring_hw-03/img/2026-02-24_19-15-00.png)
 
-![Скриншот-1 к Заданию 2:](https://github.com/presdes/monitoring_hw-03/img/2026-02-24_19-12-56.png)
+![Скриншот-1 к Заданию 2:]([https://github.com/presdes/monitoring_hw-03/img/2026-02-24_19-12-56.png)
 
 ---
 
