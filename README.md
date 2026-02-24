@@ -23,6 +23,6 @@
 ### Задание 4
 
 Скриншот-1 к Заданию 2 и 3:
-![Скриншот-2 к Заданию 1:](https://github.com/presdes/monitoring_hw-03/blob/main/img/2026-02-24_21-38-59.png)
+![Скриншот-2 к Заданию 1:](https://github.com/presdes/monitoring_hw-03/blob/main/img/2026-02-24_22-14-37.png)
 
 ---
