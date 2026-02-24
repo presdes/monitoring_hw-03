@@ -1,0 +1,22 @@
+# Docker
+*.log
+*.pid
+*.sock
+volumes/
+data/
+
+# OS
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# Environment
+.env
+*.env
+
+# Temporary
+tmp/
+temp/
+*.tmp

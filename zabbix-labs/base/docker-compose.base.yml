@@ -1,0 +1,79 @@
+# Эталонная конфигурация Zabbix 7.0 LTS (PostgreSQL)
+# Используется как основа для всех учебных стендов.
+
+services:
+  # База данных PostgreSQL
+  postgres-server:
+    image: postgres:15-alpine
+    container_name: zabbix-postgres
+    # Переменные окружения для инициализации БД
+    environment:
+      POSTGRES_USER: zabbix
+      POSTGRES_PASSWORD: zabbix
+      POSTGRES_DB: zabbix
+    volumes:
+      # Том для хранения данных БД, чтобы они не терялись при перезапуске
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - zabbix-shared-net
+    restart: unless-stopped
+    # Здоровье контейнера для зависимостей
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U zabbix"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Zabbix Server (ядро системы)
+  zabbix-server:
+    image: zabbix/zabbix-server-pgsql:ubuntu-7.0-latest
+    container_name: zabbix-server
+    environment:
+      DB_SERVER_HOST: postgres-server
+      POSTGRES_USER: zabbix
+      POSTGRES_PASSWORD: zabbix
+      POSTGRES_DB: zabbix
+      # Отключаем проверку подлинности для агентов (учебный режим)
+      ZBX_ENABLE_SNMP_TRAPS: false
+    ports:
+      # Основной порт для связи с агентами (будет изменяться в стендах)
+      - "10051:10051"
+    networks:
+      - zabbix-shared-net
+    depends_on:
+      postgres-server:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # Zabbix Web UI (интерфейс на PHP + Nginx)
+  zabbix-web:
+    image: zabbix/zabbix-web-nginx-pgsql:ubuntu-7.0-latest
+    container_name: zabbix-web
+    environment:
+      ZBX_SERVER_HOST: zabbix-server
+      DB_SERVER_HOST: postgres-server
+      POSTGRES_USER: zabbix
+      POSTGRES_PASSWORD: zabbix
+      POSTGRES_DB: zabbix
+      # Учетные данные по умолчанию: Admin / zabbix
+    ports:
+      # Порт для доступа к веб-интерфейсу из Windows (будет изменяться в стендах)
+      - "8080:8080"
+    networks:
+      - zabbix-shared-net
+    depends_on:
+      postgres-server:
+        condition: service_healthy
+      zabbix-server:
+        condition: service_started
+    restart: unless-stopped
+
+# Единая пользовательская сеть для всех контейнеров стенда
+networks:
+  zabbix-shared-net:
+    driver: bridge
+    name: zabbix-shared-net
+
+# Именованный том для данных PostgreSQL
+volumes:
+  postgres-data:

@@ -1,0 +1,42 @@
+# Файл: ~/zabbix-labs/lab2-add-hosts/docker-compose.yml
+# Только агенты, подключающиеся к существующему серверу
+
+services:
+  # Первый агент
+  zabbix-agent-1:
+    image: zabbix/zabbix-agent2:ubuntu-7.0-latest
+    container_name: motorinag-1
+    environment:
+      ZBX_HOSTNAME: motorinag-1
+      # Важно! Указываем IP сервера из lab1 в сети Docker
+      ZBX_SERVER_HOST: zabbix-server
+      ZBX_SERVER_PORT: 10051
+      ZBX_ACTIVE_ALLOW: false
+    # Для пассивных проверок порт должен быть доступен
+    ports:
+      - "10050" # Случайный порт на хосте
+    networks:
+      # Подключаемся к сети сервера из lab1
+      - zabbix-shared-net
+    restart: unless-stopped
+
+  # Второй агент
+  zabbix-agent-2:
+    image: zabbix/zabbix-agent2:ubuntu-7.0-latest
+    container_name: motorinag-2
+    environment:
+      ZBX_HOSTNAME: motorinag-2
+      ZBX_SERVER_HOST: zabbix-server
+      ZBX_SERVER_PORT: 10051
+      ZBX_ACTIVE_ALLOW: false
+    ports:
+      - "10050"
+    networks:
+      - zabbix-shared-net
+    restart: unless-stopped
+
+# Подключаемся к существующей сети от lab1
+networks:
+  zabbix-shared-net:
+    external: true
+    name: zabbix-shared-net
